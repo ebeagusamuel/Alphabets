@@ -9,7 +9,7 @@ jobs:
   test_features:
     runs-on: ubuntu-latest
     steps:
-        - run:  |
-            echo ${{ github.event.review.state }}
-            echo "I was edited"
+      - run: |
+        echo "I was edited!"
+        echo ${{ github.event.review.state }}
 
