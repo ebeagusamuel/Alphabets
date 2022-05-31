@@ -8,5 +8,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo "I was edited!"
+          echo ${{ github.event }}
 
