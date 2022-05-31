@@ -7,6 +7,6 @@ jobs:
   test_features:
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          echo '${{ toJSON(github) }}'
+      - uses: actions/checkout@v3
+      - uses: ./.github/action/anvil-reminders
 

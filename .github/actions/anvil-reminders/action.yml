@@ -1,0 +1,5 @@
+name: 'Anvil Reminders Check.'
+description: 'Checks for unchecked items in anvil reminders comment.'
+runs:
+  using: 'node16'
+  main: 'dist/main.js'
