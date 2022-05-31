@@ -2,6 +2,7 @@ name: Test pull_request_comment event
 on:
   pull_request_review_comment:
     types: [created, edited]
+  pull_request:
 
 jobs:
   test_features:
