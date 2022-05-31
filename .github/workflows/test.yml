@@ -1,0 +1,11 @@
+name: Test pull_request_comment event
+on:
+  pull_request_review_comment:
+    types: [edited]
+
+jobs:
+  test_features:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "I was edited"
+
