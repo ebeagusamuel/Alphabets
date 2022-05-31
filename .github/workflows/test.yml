@@ -10,6 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-        echo "I was edited!"
-        echo ${{ github.event.review.state }}
+          echo "I was edited!"
+          echo ${{ github.event.review.state }}
 
