@@ -10,5 +10,5 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/anvil-reminders
         with:
-          token: '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'
+          token: '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'
 
