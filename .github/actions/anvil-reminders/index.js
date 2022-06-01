@@ -23,6 +23,7 @@ const extraCommentsCheck = () => {
     repo,
     number
   })
+  console.log(response);
   const reviewCommentsFromAnvil = response.filter( commentObject => {
     if (anvilBotUsers.includes(commentObject.user.login)) {
       return true
