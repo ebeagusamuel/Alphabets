@@ -8911,8 +8911,8 @@ __nccwpck_require__.r(__webpack_exports__);
 
 console.log(_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload)
 
-const githubToken = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('token')
-const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit)(githubToken)
+// const githubToken = core.getInput('token')
+const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit)()
 const anvilBotUsers = ['kml']
 const regex = /^\s*-\s{1,4}\[ \]/
 const eventPayload = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload
@@ -8931,7 +8931,7 @@ const extraCommentsCheck = () => {
     repo,
     number
   })
-  console.log(response);
+  
   const reviewCommentsFromAnvil = response.filter( commentObject => {
     if (anvilBotUsers.includes(commentObject.user.login)) {
       return true

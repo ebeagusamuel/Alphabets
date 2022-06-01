@@ -3,8 +3,8 @@ import { context, getOctokit } from '@actions/github'
 
 console.log(context.payload)
 
-const githubToken = core.getInput('token')
-const octokit = getOctokit(githubToken)
+// const githubToken = core.getInput('token')
+const octokit = getOctokit()
 const anvilBotUsers = ['kml']
 const regex = /^\s*-\s{1,4}\[ \]/
 const eventPayload = context.payload
@@ -23,7 +23,7 @@ const extraCommentsCheck = () => {
     repo,
     number
   })
-  console.log(response);
+  
   const reviewCommentsFromAnvil = response.filter( commentObject => {
     if (anvilBotUsers.includes(commentObject.user.login)) {
       return true
