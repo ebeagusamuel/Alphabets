@@ -2,14 +2,13 @@ name: Test pull_request_comment event
 on:
   pull_request_review_comment:
     types: [created, edited]
-  pull_request_review:
-    types: [submitted]
 
 jobs:
   test_features:
     runs-on: ubuntu-latest
     steps:
-        - run:  |
-            echo ${{ github.event.review.state }}
-            echo "I was edited"
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/anvil-reminders
+        with:
+          token: ${{ secrets.PAT }}
 

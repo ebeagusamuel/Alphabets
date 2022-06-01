@@ -1,0 +1,9 @@
+name: 'Anvil Reminders Check.'
+description: 'Checks for unchecked items in anvil reminders comment.'
+inputs:
+  token:
+    description: 'GitHub token to use'
+    required: true
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
