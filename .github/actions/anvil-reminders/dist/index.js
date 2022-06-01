@@ -7705,6 +7705,14 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
+/***/ 518:
+/***/ ((module) => {
+
+module.exports = eval("require")("@actions/core");
+
+
+/***/ }),
+
 /***/ 254:
 /***/ ((module) => {
 
@@ -7858,29 +7866,115 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__nccwpck_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__nccwpck_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__nccwpck_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__nccwpck_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
 (() => {
-const { context } = __nccwpck_require__(637)
+"use strict";
+__nccwpck_require__.r(__webpack_exports__);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(518);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(637);
+/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_1__);
 
-console.log(context.payload);
 
-const anvilBotUser = 'kml';
-const eventPayload = context.payload
+
+console.log(_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload)
+
+const githubToken = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('token')
+const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit)(githubToken)
+const anvilBotUsers = ['kml']
+const regex = /^\s*-\s{1,4}\[ \]/
+const eventPayload = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload
+const { owner, repo, number } = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.issue
 const commentAuthor = eventPayload.comment.user.login
+const prHeadSha = eventPayload.comment.pull_request.head.sha
+const statusContext = 'Anvil Reminders'
+const successDescription = 'Good to go! No unchecked item found in anvil reminders comment.'
+const failureDescription = 'Please check unfinished items in the anvil reminders comment(s).'
 
-if (commentAuthor == anvilBotUser) {
-  if ( eventPayload.comment.body.match(/^\s*-\s{1,4}\[ \]/) ) {
-    console.log('Unchecked item in comment made by kml.')
-  } else {
-    console.log('No unchecked comment in the comment made by kml.')
+
+const commentsCheckSuccessful = () => !eventPayload.comment.body.match(regex) && extraCommentsCheck()
+const extraCommentsCheck = () => {
+  const response = octokit.rest.pulls.listReviewCommentsForRepo({
+    owner,
+    repo,
+    number
+  })
+  const reviewCommentsFromAnvil = response.filter( commentObject => {
+    if (anvilBotUsers.includes(commentObject.user.login)) {
+      return true
+    } else {
+      return false
+    }
+  }).map(commentObject => commentObject.body)
+
+  return reviewCommentsFromAnvil.every(comment => !comment.match(regex))
+}
+
+const setStatus = (status, description) => {
+  octokit.rest.repos.createCommitStatus({
+    owner,
+    repo,
+    sha: prHeadSha,
+    state: status,
+    description: description,
+    context: statusContext
+  })
+}
+
+if (anvilBotUsers.includes(commentAuthor)) {
+  if(commentsCheckSuccessful()) {
+    setStatus('success', successDescription)
+  }else {
+    setStatus('failure', failureDescription)
   }
-
+} else {
+  setStatus('success', successDescription)
 }
 })();
 

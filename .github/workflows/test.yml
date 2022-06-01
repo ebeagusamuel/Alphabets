@@ -9,4 +9,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/anvil-reminders
+        with:
+          token: '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'
 
