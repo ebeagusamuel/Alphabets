@@ -8911,8 +8911,8 @@ __nccwpck_require__.r(__webpack_exports__);
 
 console.log(_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload)
 
-// const githubToken = core.getInput('token')
-const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit)()
+const githubToken = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('token')
+const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit)(githubToken)
 const anvilBotUsers = ['kml']
 const regex = /^\s*-\s{1,4}\[ \]/
 const eventPayload = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload
@@ -8925,14 +8925,14 @@ const failureDescription = 'Please check unfinished items in the anvil reminders
 
 
 const commentsCheckSuccessful = () => !eventPayload.comment.body.match(regex) && extraCommentsCheck()
-const extraCommentsCheck = () => {
-  const response = octokit.rest.pulls.listReviewCommentsForRepo({
+const extraCommentsCheck = async () => {
+  const response = await octokit.rest.pulls.listReviewCommentsForRepo({
     owner,
     repo,
     number
   })
-  
-  const reviewCommentsFromAnvil = response.filter( commentObject => {
+
+  const reviewCommentsFromAnvil = response.data.filter( commentObject => {
     if (anvilBotUsers.includes(commentObject.user.login)) {
       return true
     } else {
@@ -8943,8 +8943,8 @@ const extraCommentsCheck = () => {
   return reviewCommentsFromAnvil.every(comment => !comment.match(regex))
 }
 
-const setStatus = (status, description) => {
-  octokit.rest.repos.createCommitStatus({
+const setStatus = async (status, description) => {
+  await octokit.rest.repos.createCommitStatus({
     owner,
     repo,
     sha: prHeadSha,
